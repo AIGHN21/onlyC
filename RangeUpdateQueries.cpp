@@ -5,42 +5,43 @@
 #define ll long long
 #define ln "\n"
 using namespace std;
-const ll maxn = 101;
-struct point{
-    ll x,y,z,w;
-};
-point T[maxn*4]
+const ll maxn = 2e5+7;
+ll T[maxn*4],lazy[maxn*4],arr[maxn],n,q;
 void build(ll id , ll l , ll r){
     if(l==r){
-        T[id].w=0;
-        return ;
+        T[id]=arr[l];
     }
     ll mid = (l+r)>>1;
     build(id*2,l,mid);
     build(id*2+1,mid+1,r);
     T[id] = T[id*2]+T[id*2+1];
 }
-
-void update(ll id , ll l , ll r, pos, ll val){
-
+void fix(ll id , ll l , ll r){
+    if(!lazy[id]){
+        return ;
+    }
+    T[id]+=lazy[id];
+    if(l!=r){
+        lazy[id*2]+=lazy[id];
+        lazy[id*2+1]+=lazy[id];
+    }
+    lazy[id]=0;
+}
+void update(ll id , ll l , ll r, ll u , ll v, ll val){
     if(l>v || r<u){
         return ;
     }
-    if(l==r){
-        T[id]+=val;
+    if(l >= u && r <= v){
+        lazy[id]=val;
+        fix(id,l,r);
         return;
     }
-     ll mid = (l+r)>>1;
-    if(pos<=mid){
-        update(id*2,l,mid,pos,val);
-    }
-    else{
-         update(id*2+1,mid+1,l,pos,val);
-    }
-    T[id].x=T[id*2].x+T[id*2+1];
+    ll mid = (l+r)>>1;
+    update(id*2,l,mid,u,v,val);
+    update(id*2+1,mid+1,r,u,v,val);
+    T[id]=T[id*2]+T[id*2+1];
 }
 ll get(ll id , ll l , ll r ,ll pos){
-    fix(id,l,r);
     if(l==r){
         return T[id];
     }
@@ -73,7 +74,6 @@ int main(){
             cout<<get(1,1,n,pos)<<"\n";
         }
     }
-
+    cout<<"dsm";
     return 0;
 }
-

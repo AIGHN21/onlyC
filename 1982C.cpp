@@ -1,46 +1,47 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
-void Solve() {
-    int n, l, r;
-    cin >> n >> l >> r;
-    vector<int> arr(n);
-    vector<int> marked(n, 0);
 
-    for (int i = 0; i < n; i++) {
+typedef long long ll;
+
+void Solve() {
+    ll n, l, r;
+    cin >> n >> l >> r;
+    vector<ll> arr(n);
+
+    // Nhập mảng
+    for (ll i = 0; i < n; i++) {
         cin >> arr[i];
     }
 
-    int rs = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] <= r && arr[i] >= l) {
-            marked[i] = 1;
-            rs += 1;
+    ll ans = 0, curr_sum = 0;
+    ll left = 0; // Chỉ số bắt đầu của dãy con
+
+    // Duyệt qua từng phần tử của mảng
+    for (ll right = 0; right < n; right++) {
+        curr_sum += arr[right]; // Cộng dần các phần tử
+
+        // Nếu tổng vượt quá r, ta phải di chuyển left để thu nhỏ tổng lại
+        while (curr_sum > r && left <= right) {
+            curr_sum -= arr[left];
+            left++;
+        }
+
+        // Nếu tổng nằm trong khoảng [l, r], tăng kết quả
+        if (curr_sum >= l && curr_sum <= r) {
+            ans = max(ans, right - left + 1); // Lưu kết quả tốt nhất
         }
     }
 
-    int tong = 0;
-    for (int i = 0; i < n; i++) {
-        if (marked[i] != 1) {
-            tong += arr[i];
-            if (tong <= r && tong >= l) {
-                tong = 0;
-                rs += 1;
-            } else if (tong > r) { // Fix: should be "tong > r" instead of "tong >= r"
-                tong = 0;
-            }
-        } else {
-            if (tong <= r && tong >= l) {
-                rs += 1;
-            }
-            tong = 0;
-        }
-    }
-    cout << rs << endl;
+    cout << ans << "\n";
 }
-int main(){
-    int t;
+
+int main() {
+    ll t;
     cin>>t;
     while(t--){
         Solve();
     }
+
+    return 0;
 }
